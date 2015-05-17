@@ -1,4 +1,4 @@
-# GUID [![Build Status](https://travis-ci.org/bsm/guid.png?branch=master)](https://travis-ci.org/bsm/guid)
+# GUID [![Build Status](https://travis-ci.org/bsm/go-guid.png?branch=master)](https://travis-ci.org/bsm/go-guid)
 
 Simple, thread-safe MongoDB style GUID generator.
 
@@ -11,7 +11,7 @@ import (
   "encoding/hex"
   "log"
 
-  "github.com/bsm/guid"
+  "github.com/bsm/go-guid"
 )
 
 func main() {
