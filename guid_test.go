@@ -81,13 +81,13 @@ func TestSuite(t *testing.T) {
 
 // --------------------------------------------------------------------
 
-func Benchmark_New96(b *testing.B) {
+func BenchmarkNew96(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		New96()
 	}
 }
 
-func Benchmark_New128(b *testing.B) {
+func BenchmarkNew128(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		New128()
 	}
