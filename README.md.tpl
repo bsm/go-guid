@@ -10,13 +10,13 @@ Simple, thread-safe MongoDB style GUID generator.
 ### Examples
 
 ```go
-func main {{ "Example_New96" | code }}
+func main {{ "ExampleNew96" | code }}
 ```
 
 ```go
-func main {{ "Example_New128" | code }}
+func main {{ "ExampleNew128" | code }}
 ```
 
 ```go
-func main {{ "Example_NextPUID" | code }}
+func main {{ "ExampleNextPUID" | code }}
 ```
