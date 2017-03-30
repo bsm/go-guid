@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+// GUID is an interface unifying identifiers of
+// different lengths
 type GUID interface {
 	CreatedAt() time.Time
 	WriteTo(w io.Writer) (int64, error)
@@ -17,14 +19,14 @@ type GUID interface {
 
 // --------------------------------------------------------------------
 
-type guid96 [12]byte
+type GUID96 [12]byte
 
-var base96 = guid96{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+var base96 = GUID96{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 // New96 creates a 96bit/12byte global identifier
-func New96() GUID { return new96at(time.Now()) }
+func New96() GUID96 { return new96at(time.Now()) }
 
-func new96at(ts time.Time) GUID {
+func new96at(ts time.Time) GUID96 {
 	bininc := [4]byte{0, 0, 0, 0}
 	encoder.PutUint32(bininc[:], nextInc())
 
@@ -37,29 +39,29 @@ func new96at(ts time.Time) GUID {
 }
 
 // Bytes returns a byte slice
-func (g guid96) Bytes() []byte { return g[:] }
+func (g GUID96) Bytes() []byte { return g[:] }
 
 // WriteTo implements io.WriterTo
-func (g guid96) WriteTo(w io.Writer) (int64, error) {
+func (g GUID96) WriteTo(w io.Writer) (int64, error) {
 	n, err := w.Write(g[:])
 	return int64(n), err
 }
 
 // CreatedAt extract the timestap at which the GUID was created
-func (g guid96) CreatedAt() time.Time {
+func (g GUID96) CreatedAt() time.Time {
 	return time.Unix(int64(encoder.Uint32(g[0:])), 0)
 }
 
 // --------------------------------------------------------------------
 
-type guid128 [16]byte
+type GUID128 [16]byte
 
-var base128 = guid128{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+var base128 = GUID128{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 // New128 creates a 128bit/16byte global identifier
 func New128() GUID { return new128at(time.Now()) }
 
-func new128at(ts time.Time) GUID {
+func new128at(ts time.Time) GUID128 {
 	bininc := [4]byte{0, 0, 0, 0}
 	encoder.PutUint32(bininc[:], nextInc())
 
@@ -72,16 +74,16 @@ func new128at(ts time.Time) GUID {
 }
 
 // Bytes returns a byte slice
-func (g guid128) Bytes() []byte { return g[:] }
+func (g GUID128) Bytes() []byte { return g[:] }
 
 // WriteTo implements io.WriterTo
-func (g guid128) WriteTo(w io.Writer) (int64, error) {
+func (g GUID128) WriteTo(w io.Writer) (int64, error) {
 	n, err := w.Write(g[:])
 	return int64(n), err
 }
 
 // CreatedAt extract the timestap at which the GUID was created
-func (g guid128) CreatedAt() time.Time {
+func (g GUID128) CreatedAt() time.Time {
 	return time.Unix(int64(encoder.Uint64(g[0:])), 0)
 }
 

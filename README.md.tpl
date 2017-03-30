@@ -10,25 +10,13 @@ Simple, thread-safe MongoDB style GUID generator.
 ### Examples
 
 ```go
-func main {
-	// Create a new 12-byte globally-unique identifier
-	id := guid.New96()
-	fmt.Println(hex.EncodeToString(id.Bytes()))
-}
+func main {{ "ExampleNew96" | code }}
 ```
 
 ```go
-func main {
-	// Create a new 16-byte globally-unique identifier
-	id := guid.New128()
-	fmt.Println(hex.EncodeToString(id.Bytes()))
-}
+func main {{ "ExampleNew128" | code }}
 ```
 
 ```go
-func main {
-	// Create a new 8-byte pseudo-unique identifier
-	id := guid.NextPUID()
-	fmt.Println(id)
-}
+func main {{ "ExampleNextPUID" | code }}
 ```

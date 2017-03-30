@@ -1,9 +1,9 @@
 package guid
 
 import (
-	"hash/crc64"
+	crypto "crypto/rand"
+	"encoding/binary"
 	"math/rand"
-	"net"
 	"time"
 )
 
@@ -17,15 +17,12 @@ const (
 var puidSource rand.Source
 
 func init() {
-	ifaces, err := net.Interfaces()
-	if err != nil {
+	buf := make([]byte, 8)
+	if _, err := crypto.Read(buf); err != nil {
 		puidSource = rand.NewSource(time.Now().UnixNano())
 	} else {
-		hash := crc64.New(crc64.MakeTable(crc64.ECMA))
-		for _, iface := range ifaces {
-			hash.Write(iface.HardwareAddr)
-		}
-		puidSource = rand.NewSource(int64(hash.Sum64()))
+		n := int64(binary.BigEndian.Uint64(buf))
+		puidSource = rand.NewSource(n)
 	}
 }
 
