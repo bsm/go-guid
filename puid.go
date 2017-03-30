@@ -38,7 +38,7 @@ func NextPUID() PUID {
 	return PUID(ts<<tsOffset | rn)
 }
 
-// CreatedAt extract the timestap at which the PUID was created
+// CreatedAt extract the timestamp at which the PUID was created
 func (p PUID) CreatedAt() time.Time {
 	return time.Unix(int64(p>>tsOffset), 0)
 }

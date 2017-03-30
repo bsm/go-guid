@@ -19,6 +19,7 @@ type GUID interface {
 
 // --------------------------------------------------------------------
 
+// GUID96 is a 12-byte globally unique identifier
 type GUID96 [12]byte
 
 var base96 = GUID96{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
@@ -47,13 +48,14 @@ func (g GUID96) WriteTo(w io.Writer) (int64, error) {
 	return int64(n), err
 }
 
-// CreatedAt extract the timestap at which the GUID was created
+// CreatedAt extract the timestamp at which the GUID was created
 func (g GUID96) CreatedAt() time.Time {
 	return time.Unix(int64(encoder.Uint32(g[0:])), 0)
 }
 
 // --------------------------------------------------------------------
 
+// GUID128 is a 16-byte globally unique identifier
 type GUID128 [16]byte
 
 var base128 = GUID128{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
@@ -82,7 +84,7 @@ func (g GUID128) WriteTo(w io.Writer) (int64, error) {
 	return int64(n), err
 }
 
-// CreatedAt extract the timestap at which the GUID was created
+// CreatedAt extract the timestamp at which the GUID was created
 func (g GUID128) CreatedAt() time.Time {
 	return time.Unix(int64(encoder.Uint64(g[0:])), 0)
 }
