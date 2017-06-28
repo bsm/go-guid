@@ -18,9 +18,3 @@ func ExampleNew128() {
 	id := guid.New128()
 	fmt.Println(hex.EncodeToString(id.Bytes()))
 }
-
-func ExampleNextPUID() {
-	// Create a new 8-byte pseudo-unique identifier
-	id := guid.NextPUID()
-	fmt.Println(id)
-}
