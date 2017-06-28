@@ -21,7 +21,7 @@ var _ = Describe("PUID", func() {
 	})
 
 	It("should avoid collisions", func() {
-		n := 40000
+		n := 1000000
 		if testing.Short() {
 			n = 10000
 		}

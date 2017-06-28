@@ -10,15 +10,21 @@ import (
 )
 
 const (
-	tsBits   = 34
-	tsOffset = 64 - tsBits
-	maxTs    = 1<<tsBits - 1
-	maxRn    = 1<<tsOffset - 1
+	puidTsB = 34
+	puidRnB = 10
+	puidInB = 64 - puidTsB - puidRnB
+
+	puidTsO = puidRnB + puidInB
+	puidRnO = puidInB
+
+	puidMaxTS = 1<<puidTsB - 1
+	puidMaxRN = 1<<puidRnB - 1
+	puidMaxIN = 1<<puidInB - 1
 
 	numPUIDSlots = 32
 )
 
-var puidSlot int64
+var puidInc uint64
 
 var puidSlots [numPUIDSlots]struct {
 	rand.Source
@@ -45,19 +51,21 @@ type PUID uint64
 
 // NextPUID creates a new pseudo unique identifier
 func NextPUID() PUID {
-	si := atomic.AddInt64(&puidSlot, 1) % numPUIDSlots
-	slot := puidSlots[si]
+	inc := atomic.AddUint64(&puidInc, 1)
+	slot := puidSlots[inc%numPUIDSlots]
 
 	slot.Lock()
-	n := slot.Int63()
+	rnn := slot.Int63()
 	slot.Unlock()
 
-	ts := uint64(time.Now().Unix()) % maxTs
-	rn := uint64(n) % maxRn
-	return PUID(ts<<tsOffset | rn)
+	ts := uint64(time.Now().Unix()) % puidMaxTS
+	rn := uint64(rnn) % puidMaxRN
+	in := inc % puidMaxIN
+
+	return PUID(ts<<puidTsO | rn<<puidRnO | in)
 }
 
 // CreatedAt extract the timestamp at which the PUID was created
 func (p PUID) CreatedAt() time.Time {
-	return time.Unix(int64(p>>tsOffset), 0)
+	return time.Unix(int64(p>>puidTsO), 0)
 }
