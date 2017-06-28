@@ -1,6 +1,7 @@
 package guid
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -20,18 +21,30 @@ var _ = Describe("PUID", func() {
 		Expect(p.CreatedAt()).To(BeTemporally("~", time.Now(), time.Second))
 	})
 
-	It("should avoid collisions", func() {
-		n := 1000000
-		if testing.Short() {
-			n = 10000
+	It("should minimise collisions", func() {
+		set := make(map[PUID]int)
+		mu := new(sync.Mutex)
+		wg := new(sync.WaitGroup)
+
+		for i := 0; i < 50; i++ {
+			wg.Add(1)
+
+			go func() {
+				defer GinkgoRecover()
+				defer wg.Done()
+
+				src := NewPUIDSource()
+				for i := 0; i < 10000; i++ {
+					p := src.Next()
+					mu.Lock()
+					set[p]++
+					mu.Unlock()
+				}
+			}()
 		}
 
-		set := make(map[PUID]int, n)
-		for i := 0; i < n; i++ {
-			p := NextPUID()
-			set[p]++
-		}
-		Expect(len(set)).To(Equal(n))
+		wg.Wait()
+		Expect(len(set)).To(BeNumerically("~", 500000, 200))
 	})
 
 })
