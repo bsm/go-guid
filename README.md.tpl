@@ -16,7 +16,3 @@ func main {{ "ExampleNew96" | code }}
 ```go
 func main {{ "ExampleNew128" | code }}
 ```
-
-```go
-func main {{ "ExampleNextPUID" | code }}
-```

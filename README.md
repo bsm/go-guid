@@ -24,11 +24,3 @@ func main {
 	fmt.Println(hex.EncodeToString(id.Bytes()))
 }
 ```
-
-```go
-func main {
-	// Create a new 8-byte pseudo-unique identifier
-	id := guid.NextPUID()
-	fmt.Println(id)
-}
-```

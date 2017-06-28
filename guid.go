@@ -61,7 +61,7 @@ type GUID128 [16]byte
 var base128 = GUID128{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 // New128 creates a 128bit/16byte global identifier
-func New128() GUID { return new128at(time.Now()) }
+func New128() GUID128 { return new128at(time.Now()) }
 
 func new128at(ts time.Time) GUID128 {
 	bininc := [4]byte{0, 0, 0, 0}
