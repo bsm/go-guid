@@ -4,6 +4,8 @@ import (
 	crypto "crypto/rand"
 	"encoding/binary"
 	"math/rand"
+	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -12,17 +14,27 @@ const (
 	tsOffset = 64 - tsBits
 	maxTs    = 1<<tsBits - 1
 	maxRn    = 1<<tsOffset - 1
+
+	numPUIDSlots = 32
 )
 
-var puidSource rand.Source
+var puidSlot int64
+
+var puidSlots [numPUIDSlots]struct {
+	rand.Source
+	sync.Mutex
+}
 
 func init() {
 	buf := make([]byte, 8)
-	if _, err := crypto.Read(buf); err != nil {
-		puidSource = rand.NewSource(time.Now().UnixNano())
-	} else {
-		n := int64(binary.BigEndian.Uint64(buf))
-		puidSource = rand.NewSource(n)
+	for i := 0; i < numPUIDSlots; i++ {
+		var n int64
+		if _, err := crypto.Read(buf); err != nil {
+			n = time.Now().UnixNano()
+		} else {
+			n = int64(binary.BigEndian.Uint64(buf))
+		}
+		puidSlots[i].Source = rand.NewSource(n)
 	}
 }
 
@@ -33,8 +45,15 @@ type PUID uint64
 
 // NextPUID creates a new pseudo unique identifier
 func NextPUID() PUID {
+	si := atomic.AddInt64(&puidSlot, 1) % numPUIDSlots
+	slot := puidSlots[si]
+
+	slot.Lock()
+	n := slot.Int63()
+	slot.Unlock()
+
 	ts := uint64(time.Now().Unix()) % maxTs
-	rn := uint64(puidSource.Int63()) % maxRn
+	rn := uint64(n) % maxRn
 	return PUID(ts<<tsOffset | rn)
 }
 

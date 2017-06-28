@@ -21,17 +21,17 @@ var _ = Describe("PUID", func() {
 	})
 
 	It("should avoid collisions", func() {
-		n := 1000
+		n := 40000
 		if testing.Short() {
-			n = 100
+			n = 10000
 		}
 
-		set := make(map[PUID]struct{}, n)
+		set := make(map[PUID]int, n)
 		for i := 0; i < n; i++ {
 			p := NextPUID()
-			Expect(set).NotTo(HaveKey(p))
-			set[p] = struct{}{}
+			set[p]++
 		}
+		Expect(len(set)).To(Equal(n))
 	})
 
 })
@@ -42,4 +42,12 @@ func BenchmarkNextPUID(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		NextPUID()
 	}
+}
+
+func BenchmarkNextPUID_Parallel(b *testing.B) {
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			NextPUID()
+		}
+	})
 }
