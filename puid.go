@@ -21,7 +21,7 @@ const (
 	puidMaxRN = 1<<puidRnB - 1
 	puidMaxIN = 1<<puidInB - 1
 
-	puidNumSlots = 16
+	puidNumSlots = 64
 )
 
 // PUID is a 64-bit pseudo unique identifier
@@ -71,6 +71,10 @@ type puidSource struct {
 }
 
 func (p *puidSource) Next() PUID {
+	return p.NextAt(time.Now())
+}
+
+func (p *puidSource) NextAt(now time.Time) PUID {
 	inc := atomic.AddUint64(&p.inc, 1)
 	slot := p.slots[inc%puidNumSlots]
 
@@ -78,7 +82,7 @@ func (p *puidSource) Next() PUID {
 	rnn := slot.Int63()
 	slot.Unlock()
 
-	ts := uint64(time.Now().Unix()) % puidMaxTS
+	ts := uint64(now.Unix()) % puidMaxTS
 	rn := uint64(rnn) % puidMaxRN
 	in := inc % puidMaxIN
 

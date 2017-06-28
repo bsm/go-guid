@@ -21,21 +21,22 @@ var _ = Describe("PUID", func() {
 		Expect(p.CreatedAt()).To(BeTemporally("~", time.Now(), time.Second))
 	})
 
-	It("should minimise collisions", func() {
+	It("should avoid collisions", func() {
 		set := make(map[PUID]int)
 		mu := new(sync.Mutex)
 		wg := new(sync.WaitGroup)
+		now := time.Now()
 
-		for i := 0; i < 50; i++ {
+		for i := 0; i < 20; i++ {
 			wg.Add(1)
 
 			go func() {
 				defer GinkgoRecover()
 				defer wg.Done()
 
-				src := NewPUIDSource()
-				for i := 0; i < 10000; i++ {
-					p := src.Next()
+				src := NewPUIDSource().(*puidSource)
+				for i := 0; i < 5000; i++ {
+					p := src.NextAt(now)
 					mu.Lock()
 					set[p]++
 					mu.Unlock()
@@ -44,7 +45,7 @@ var _ = Describe("PUID", func() {
 		}
 
 		wg.Wait()
-		Expect(len(set)).To(BeNumerically("~", 500000, 200))
+		Expect(len(set)).To(Equal(100000))
 	})
 
 })

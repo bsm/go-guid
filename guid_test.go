@@ -46,6 +46,14 @@ var _ = Describe("GUID", func() {
 			Expect(n).To(Equal(int64(12)))
 		})
 
+		It("should avoid collisions", func() {
+			set := make(map[GUID96]int)
+			for i := 0; i < 1000000; i++ {
+				set[New96()]++
+			}
+			Expect(len(set)).To(Equal(1000000))
+		})
+
 	})
 
 	Describe("128bit", func() {
@@ -69,6 +77,14 @@ var _ = Describe("GUID", func() {
 			n, err := New128().WriteTo(&bytes.Buffer{})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(n).To(Equal(int64(16)))
+		})
+
+		It("should avoid collisions", func() {
+			set := make(map[GUID128]int)
+			for i := 0; i < 1000000; i++ {
+				set[New128()]++
+			}
+			Expect(len(set)).To(Equal(1000000))
 		})
 
 	})
