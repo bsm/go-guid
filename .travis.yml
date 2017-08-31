@@ -1,6 +1,8 @@
 language: go
 install:
-  - go get -t ./...
+  - go get -u github.com/golang/dep/cmd/dep
+  - dep ensure -v
 go:
   - 1.7.6
   - 1.8.3
+  - 1.9
